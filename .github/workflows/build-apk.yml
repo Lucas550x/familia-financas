@@ -1,0 +1,91 @@
+name: Gerar APK Android
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    steps:
+      - name: Baixar projeto
+        uses: actions/checkout@v4
+
+      - name: Instalar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Criar arquivos de plataforma
+        run: flutter create . --project-name familia_financas
+
+      - name: Preparar assinatura estável
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ] || [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "::error::Configure os secrets ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS e ANDROID_KEY_PASSWORD."
+            exit 1
+          fi
+          echo "$KEYSTORE_B64" | base64 --decode > "$RUNNER_TEMP/familia-financas-upload.jks"
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p = Path('android/app/build.gradle.kts')
+          s = p.read_text()
+          needle = '    buildTypes {'
+          signing = '    signingConfigs {\n        create("release") {\n            keyAlias = System.getenv("KEY_ALIAS")\n            keyPassword = System.getenv("KEY_PASSWORD")\n            storeFile = file(System.getenv("KEYSTORE_PATH"))\n            storePassword = System.getenv("KEYSTORE_PASSWORD")\n        }\n    }\n\n'
+          if needle not in s:
+              raise SystemExit('Não encontrei buildTypes no Gradle gerado pelo Flutter.')
+          s = s.replace(needle, signing + needle, 1)
+          old = 'signingConfig = signingConfigs.getByName("debug")'
+          if old not in s:
+              raise SystemExit('Não encontrei a assinatura debug esperada no Gradle.')
+          s = s.replace(old, 'signingConfig = signingConfigs.getByName("release")', 1)
+          p.write_text(s)
+          PYCODE
+        shell: bash
+
+      - name: Instalar dependências
+        run: flutter pub get
+
+      - name: Validar código
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Executar testes
+        run: flutter test
+
+      - name: Gerar APK de release
+        env:
+          KEYSTORE_PATH: ${{ runner.temp }}/familia-financas-upload.jks
+        run: flutter build apk --release --build-name=2.0.${{ github.run_number }} --build-number=${{ github.run_number }} --dart-define=APP_BUILD=${{ github.run_number }} --dart-define=APP_SHA=${{ github.sha }}
+
+      - name: Renomear APK
+        run: cp build/app/outputs/flutter-apk/app-release.apk familia-financas-build-${{ github.run_number }}.apk
+
+      - name: Disponibilizar APK no Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: familia-financas-apk
+          path: familia-financas-build-${{ github.run_number }}.apk
+          retention-days: 30
+
+      - name: Publicar atualização
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Família Finanças • build ${{ github.run_number }}
+          body: |
+            Atualização automática gerada a partir do commit `${{ github.sha }}`.
+            Abra o aplicativo anterior para receber o aviso de nova versão.
+          files: familia-financas-build-${{ github.run_number }}.apk
+          make_latest: true

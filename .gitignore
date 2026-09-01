@@ -1,0 +1,13 @@
+# Flutter and Dart generated files.
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+
+# IDE and local operating system files.
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
