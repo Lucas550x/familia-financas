@@ -4,6 +4,8 @@
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+*.jks
+CHAVES.env
 
 # IDE and local operating system files.
 .idea/

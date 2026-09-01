@@ -270,7 +270,7 @@ class DashboardScreen extends StatelessWidget {
         MonthSelector(month: month, onPrevious: onPrevious, onNext: onNext),
         if (update != null) ...[
           const SizedBox(height: 14),
-          _UpdateBanner(build: update!.build, onTap: onUpdate),
+          _UpdateBanner(buildNumber: update!.build, onTap: onUpdate),
         ],
         if (urgent > 0) ...[
           const SizedBox(height: 14),
@@ -732,11 +732,11 @@ class _BudgetCard extends StatelessWidget {
 }
 
 class _UpdateBanner extends StatelessWidget {
-  final int build;
+  final int buildNumber;
   final VoidCallback onTap;
-  const _UpdateBanner({required this.build, required this.onTap});
+  const _UpdateBanner({required this.buildNumber, required this.onTap});
   @override
-  Widget build(BuildContext context) => Material(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(18), child: InkWell(borderRadius: BorderRadius.circular(18), onTap: onTap, child: Padding(padding: const EdgeInsets.all(14), child: Row(children: [Icon(Icons.system_update_alt_rounded, color: Theme.of(context).colorScheme.onPrimaryContainer), const SizedBox(width: 10), Expanded(child: Text('Nova versão disponível • build $build', style: const TextStyle(fontWeight: FontWeight.w800))), const Icon(Icons.chevron_right_rounded)]))));
+  Widget build(BuildContext context) => Material(color: Theme.of(context).colorScheme.primaryContainer, borderRadius: BorderRadius.circular(18), child: InkWell(borderRadius: BorderRadius.circular(18), onTap: onTap, child: Padding(padding: const EdgeInsets.all(14), child: Row(children: [Icon(Icons.system_update_alt_rounded, color: Theme.of(context).colorScheme.onPrimaryContainer), const SizedBox(width: 10), Expanded(child: Text('Nova versão disponível • build $buildNumber', style: const TextStyle(fontWeight: FontWeight.w800))), const Icon(Icons.chevron_right_rounded)]))));
 }
 
 class _ProjectionCard extends StatelessWidget {
