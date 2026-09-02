@@ -265,7 +265,30 @@ class _FamilyPageState extends State<FamilyPage> {
         final membership = snapshot.data!;
         final family = Map<String, dynamic>.from(membership['families'] as Map);
         final isAdmin = membership['role'] == 'admin';
-        return Scaffold(appBar: AppBar(title: const Text('Minha família')), body: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(family['name'] as String, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900)), const SizedBox(height: 8), Text(isAdmin ? 'Você administra esta família.' : 'Você participa desta família.'), const SizedBox(height: 24), if (isAdmin) FilledButton.icon(onPressed: () => _showInvite(membership), icon: const Icon(Icons.person_add_alt_1_rounded), label: const Text('Criar convite'))])),
+        return Scaffold(
+          appBar: AppBar(title: const Text('Minha família')),
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  family['name'] as String,
+                  style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 8),
+                Text(isAdmin ? 'Você administra esta família.' : 'Você participa desta família.'),
+                const SizedBox(height: 24),
+                if (isAdmin)
+                  FilledButton.icon(
+                    onPressed: () => _showInvite(membership),
+                    icon: const Icon(Icons.person_add_alt_1_rounded),
+                    label: const Text('Criar convite'),
+                  ),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -277,5 +300,21 @@ class _FamilyError extends StatelessWidget {
   const _FamilyError({required this.onRetry});
 
   @override
-  Widget build(BuildContext context) => Scaffold(body: Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.cloud_off_rounded, size: 48), const SizedBox(height: 16), const Text('Não foi possível acessar a sua família agora.'), const SizedBox(height: 12), FilledButton(onPressed: onRetry, child: const Text('Tentar novamente'))])));
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cloud_off_rounded, size: 48),
+                const SizedBox(height: 16),
+                const Text('Não foi possível acessar a sua família agora.'),
+                const SizedBox(height: 12),
+                FilledButton(onPressed: onRetry, child: const Text('Tentar novamente')),
+              ],
+            ),
+          ),
+        ),
+      );
 }
