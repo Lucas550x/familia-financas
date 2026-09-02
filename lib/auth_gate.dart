@@ -152,6 +152,7 @@ class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
           FilledButton(onPressed: () async { if (_password.text.length < 6) return; await _supabase.auth.updateUser(UserAttributes(password: _password.text)); await _supabase.auth.signOut(); }, child: const Text('Salvar nova senha')),
         ]))),
       );
+}
 
 class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
@@ -172,7 +173,7 @@ class _AccountPageState extends State<AccountPage> {
   void dispose() { _name.dispose(); _email.dispose(); _password.dispose(); super.dispose(); }
 
   Future<void> _save() async {
-    await _supabase.auth.updateUser(UserAttributes(email: _email.text.trim(), password: _password.text.isEmpty ? null : _password.text, data: {'display_name': _name.text.trim()}, emailRedirectTo: kIsWeb ? null : _authRedirectUrl));
+    await _supabase.auth.updateUser(UserAttributes(email: _email.text.trim(), password: _password.text.isEmpty ? null : _password.text, data: {'display_name': _name.text.trim()}));
     if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dados atualizados. Confirme o novo e-mail, se ele foi alterado.')));
   }
 
