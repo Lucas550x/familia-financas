@@ -7,6 +7,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({
+      'updateChecks': false,
+      'soundEnabled': false,
+    });
     await Supabase.initialize(
       url: SupabaseConfig.url,
       publishableKey: SupabaseConfig.publishableKey,
@@ -14,11 +18,6 @@ void main() {
   });
 
   testWidgets('app opens the sign-in screen without a session', (tester) async {
-    SharedPreferences.setMockInitialValues({
-      'updateChecks': false,
-      'soundEnabled': false,
-    });
-
     await tester.pumpWidget(const FamiliaFinancasApp());
     await tester.pumpAndSettle();
 
