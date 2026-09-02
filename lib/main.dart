@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app_state.dart';
 import 'auth_gate.dart';
+import 'brand_theme.dart';
 import 'models.dart';
 import 'supabase_config.dart';
 import 'update_service.dart';
@@ -46,45 +48,7 @@ class _FamiliaFinancasAppState extends State<FamiliaFinancasApp> {
   }
 
   ThemeData _theme(Brightness brightness) {
-    final dark = brightness == Brightness.dark;
-    const seed = Color(0xFF6C63FF);
-    final scheme = ColorScheme.fromSeed(
-      seedColor: seed,
-      brightness: brightness,
-      surface: dark ? const Color(0xFF111319) : const Color(0xFFF8F9FD),
-    );
-    return ThemeData(
-      useMaterial3: true,
-      brightness: brightness,
-      colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.surface,
-      cardTheme: CardThemeData(
-        margin: EdgeInsets.zero,
-        elevation: 0,
-        color: dark ? const Color(0xFF191C24) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: dark ? const Color(0xFF20232C) : const Color(0xFFF1F3F8),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: scheme.primary, width: 1.5)),
-      ),
-      navigationBarTheme: NavigationBarThemeData(
-        height: 72,
-        backgroundColor: dark ? const Color(0xFF151820) : Colors.white,
-        indicatorColor: scheme.primaryContainer,
-        labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
-          fontSize: 11,
-          fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
-        )),
-      ),
-      snackBarTheme: SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      ),
-    );
+    return BrandTheme.create(brightness);
   }
 
   @override
@@ -263,11 +227,11 @@ class DashboardScreen extends StatelessWidget {
     final sorted = [...bills]..sort((a, b) => a.dueDay.compareTo(b.dueDay));
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(18, 16, 18, 28),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
       children: [
         Row(
           children: [
-            Container(width: 46, height: 46, decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(15)), child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white)),
+            SvgPicture.asset('assets/brand/simbolo.svg', width: 46, height: 46),
             const SizedBox(width: 12),
             const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Família Finanças', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), Text('Seu dinheiro, sem complicação', style: TextStyle(fontSize: 12, color: Colors.grey))])),
             IconButton.filledTonal(onPressed: onUpdate, icon: Badge(isLabelVisible: update != null, child: const Icon(Icons.notifications_none_rounded))),
@@ -349,7 +313,7 @@ class _BillsScreenState extends State<BillsScreen> {
     if (filter == 'Pagas') bills = bills.where((e) => e.isPaid(key)).toList();
     bills.sort((a, b) => a.dueDay.compareTo(b.dueDay));
     return Scaffold(
-      body: ListView(padding: const EdgeInsets.fromLTRB(18, 18, 18, 100), children: [
+      body: ListView(padding: const EdgeInsets.fromLTRB(20, 20, 20, 100), children: [
         PageTitle(title: 'Contas', subtitle: 'Controle vencimentos e recorrências', action: IconButton.filled(onPressed: () => showBillForm(context, widget.state, widget.month), icon: const Icon(Icons.add_rounded))),
         const SizedBox(height: 16),
         MonthSelector(month: widget.month, onPrevious: widget.onPrevious, onNext: widget.onNext),
@@ -381,7 +345,7 @@ class IncomeScreen extends StatelessWidget {
         const SizedBox(height: 18),
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(gradient: LinearGradient(colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.tertiary]), borderRadius: BorderRadius.circular(24)),
+          decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(16)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Total de entradas', style: TextStyle(color: Colors.white70)), const SizedBox(height: 5), Text(money(state.totalIncome(key)), style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w900)), const SizedBox(height: 4), Text(monthName(month), style: const TextStyle(color: Colors.white70))]),
         ),
         const SizedBox(height: 18),
@@ -580,10 +544,16 @@ class BillTile extends StatelessWidget {
     final overdue = current && !paid && bill.dueDay < now.day;
     final dueToday = current && !paid && bill.dueDay == now.day;
     final installment = bill.installmentNumber(key);
-    final accent = paid ? Colors.green : overdue ? Colors.redAccent : dueToday ? Colors.orange : Theme.of(context).colorScheme.primary;
+    final accent = paid
+        ? Theme.of(context).colorScheme.primary
+        : overdue
+        ? Theme.of(context).colorScheme.error
+        : dueToday
+        ? BrandColors.gold
+        : Theme.of(context).colorScheme.primary;
     return Card(
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
         onTap: () => showPaymentSheet(context, state, bill, key),
         child: Padding(
           padding: const EdgeInsets.all(14),
@@ -682,7 +652,7 @@ class _HeroBalance extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(22),
-    decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Theme.of(context).colorScheme.primary, Theme.of(context).colorScheme.tertiary]), borderRadius: BorderRadius.circular(28), boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.primary.withValues(alpha: .18), blurRadius: 28, offset: const Offset(0, 12))]),
+    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(16)),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [const Text('Sobra prevista', style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w600)), const SizedBox(height: 4), FittedBox(child: Text(money(balance), style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w900))), const SizedBox(height: 18), Row(children: [Expanded(child: _HeroMini(label: 'Entradas', value: money(income), icon: Icons.south_west_rounded)), Container(width: 1, height: 38, color: Colors.white24), const SizedBox(width: 14), Expanded(child: _HeroMini(label: 'Contas', value: money(expenses), icon: Icons.north_east_rounded))])]),
   );
 }

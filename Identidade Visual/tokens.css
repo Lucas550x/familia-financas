@@ -1,0 +1,97 @@
+/* Família Finanças — design tokens
+   Fonte única de verdade para cor, tipo, espaçamento e raio.
+   Importe este arquivo uma vez no entrypoint da aplicação. */
+
+:root {
+  /* ---- Marca ---- */
+  --ff-verde-cofre: #0F7A5A;   /* primária: marca, saldo, receita */
+  --ff-verde-vivo:  #1FA97C;   /* ações, estados ativos, verde sobre fundo escuro */
+  --ff-verde-fundo: #0B5C43;   /* hover/pressed do verde primário */
+  --ff-menta:       #DCF2E8;   /* fundo de ícones e chips */
+  --ff-menta-forte: #B9E5D3;   /* bordas sobre menta */
+
+  /* ---- Sinal financeiro ---- */
+  --ff-coral:       #E2603C;   /* despesa, alerta */
+  --ff-coral-texto: #C24A28;   /* coral acessível sobre fundo claro (AA) */
+  --ff-coral-fundo: #FBE6DF;
+  --ff-ouro:        #F2B441;   /* metas, conquistas, poupança */
+  --ff-ouro-texto:  #8A5F09;   /* ouro acessível sobre fundo claro (AA) */
+  --ff-ouro-fundo:  #FDF1DA;
+
+  /* ---- Neutros ---- */
+  --ff-grafite:     #10221C;   /* texto principal / fundo do modo escuro */
+  --ff-nevoa:       #6B7A74;   /* texto secundário */
+  --ff-nevoa-clara: #9AA7A2;   /* placeholder, texto desabilitado */
+  --ff-areia:       #F7F5EF;   /* fundo das telas */
+  --ff-linha:       #E7E4DB;   /* divisórias e bordas */
+  --ff-branco:      #FFFFFF;   /* superfície de cards */
+
+  /* ---- Papéis semânticos (use estes na UI) ---- */
+  --ff-bg:            var(--ff-areia);
+  --ff-surface:       var(--ff-branco);
+  --ff-text:          var(--ff-grafite);
+  --ff-text-muted:    var(--ff-nevoa);
+  --ff-border:        var(--ff-linha);
+  --ff-primary:       var(--ff-verde-cofre);
+  --ff-primary-hover: var(--ff-verde-fundo);
+  --ff-on-primary:    var(--ff-branco);
+  --ff-income:        var(--ff-verde-cofre);
+  --ff-expense:       var(--ff-coral-texto);
+  --ff-goal:          var(--ff-ouro);
+
+  /* ---- Tipografia ---- */
+  --ff-font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --ff-font-body:    "Inter", system-ui, sans-serif;
+
+  --ff-text-xs:   12px;  /* metadados, legenda */
+  --ff-text-sm:   13px;  /* rótulos */
+  --ff-text-base: 15px;  /* corpo */
+  --ff-text-lg:   18px;  /* título de card */
+  --ff-text-xl:   22px;  /* título de tela */
+  --ff-text-2xl:  30px;  /* saldo em destaque */
+  --ff-text-3xl:  38px;  /* hero */
+
+  --ff-leading-tight: 1.2;
+  --ff-leading-body:  1.55;
+
+  /* ---- Espaçamento (grade de 4px) ---- */
+  --ff-space-1: 4px;
+  --ff-space-2: 8px;
+  --ff-space-3: 12px;
+  --ff-space-4: 16px;
+  --ff-space-5: 20px;
+  --ff-space-6: 24px;
+  --ff-space-8: 32px;
+  --ff-space-10: 40px;
+
+  /* ---- Raio ---- */
+  --ff-radius-sm:   10px;  /* ícone quadrado, chip */
+  --ff-radius-md:   16px;  /* card, botão grande */
+  --ff-radius-lg:   24px;  /* folha inferior, modal */
+  --ff-radius-full: 999px; /* pílula, avatar */
+
+  /* ---- Elevação (uso raro; prefira cor de superfície) ---- */
+  --ff-shadow-card: 0 1px 2px rgba(16, 34, 28, .06);
+  --ff-shadow-sheet: 0 -8px 24px rgba(16, 34, 28, .12);
+}
+
+[data-theme="dark"] {
+  --ff-bg:         #0B1714;
+  --ff-surface:    #14261F;
+  --ff-text:       #EDF3F0;
+  --ff-text-muted: #93A49D;
+  --ff-border:     #24382F;
+  --ff-primary:       var(--ff-verde-vivo);
+  --ff-primary-hover: #2ABD8C;
+  --ff-on-primary:    #06231A;
+  --ff-income:  var(--ff-verde-vivo);
+  --ff-expense: #F58063;
+  --ff-goal:    var(--ff-ouro);
+}
+
+/* Valores monetários sempre alinham verticalmente em listas */
+.ff-valor {
+  font-family: var(--ff-font-body);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}

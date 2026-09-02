@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Família Finanças — identidade</title>
+<link rel="icon" href="../logo/favicon.svg">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../tokens/tokens.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ff-bg); color: var(--ff-text);
+    font-family: var(--ff-font-body); font-size: var(--ff-text-base);
+    line-height: var(--ff-leading-body);
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: var(--ff-space-10) var(--ff-space-5) 80px; }
+  h1, h2 { font-family: var(--ff-font-display); font-weight: 600; line-height: var(--ff-leading-tight); margin: 0; }
+  h1 { font-size: var(--ff-text-3xl); }
+  h2 { font-size: var(--ff-text-xl); margin: var(--ff-space-10) 0 var(--ff-space-4); }
+  p.sub { color: var(--ff-text-muted); margin: var(--ff-space-3) 0 0; max-width: 60ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--ff-space-3); }
+  .sw { border-radius: var(--ff-radius-sm); height: 68px; border: 1px solid var(--ff-border); }
+  .sw + p { margin: var(--ff-space-2) 0 0; font-size: var(--ff-text-sm); font-weight: 500; }
+  .sw ~ code { font-size: var(--ff-text-xs); color: var(--ff-text-muted); }
+  .card {
+    background: var(--ff-surface); border: 1px solid var(--ff-border);
+    border-radius: var(--ff-radius-md); padding: var(--ff-space-4);
+  }
+  .saldo { background: var(--ff-primary); color: var(--ff-on-primary); border: none; }
+  .saldo .n { font-family: var(--ff-font-display); font-size: var(--ff-text-2xl); font-weight: 600; }
+  .row { display: flex; align-items: center; gap: var(--ff-space-3); padding: var(--ff-space-3) 0; border-bottom: 1px solid var(--ff-border); }
+  .row:last-child { border-bottom: none; }
+  .ic { width: 36px; height: 36px; border-radius: var(--ff-radius-sm); background: var(--ff-menta); }
+  .grow { flex: 1; }
+  .meta { font-size: var(--ff-text-xs); color: var(--ff-text-muted); }
+  .in { color: var(--ff-income); font-weight: 600; }
+  .out { color: var(--ff-expense); font-weight: 600; }
+  button {
+    font: inherit; font-weight: 500; padding: 12px 20px; border-radius: var(--ff-radius-md);
+    cursor: pointer; min-height: 44px; border: 1px solid transparent;
+  }
+  .primary { background: var(--ff-primary); color: var(--ff-on-primary); }
+  .primary:hover { background: var(--ff-primary-hover); }
+  .secondary { background: transparent; color: var(--ff-text); border-color: var(--ff-border); }
+  .ghost { background: transparent; color: var(--ff-primary); }
+  .trilho { height: 6px; border-radius: 3px; background: var(--ff-border); margin-top: 8px; }
+  .prog { height: 6px; border-radius: 3px; background: var(--ff-goal); width: 68%; }
+  .toggle { position: fixed; top: 16px; right: 16px; }
+</style>
+</head>
+<body>
+<button class="secondary toggle" onclick="document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'">Alternar tema</button>
+
+<div class="wrap">
+  <img src="../logo/logo-horizontal.svg" alt="Família Finanças" width="272" height="77">
+  <h1 style="margin-top:var(--ff-space-6)">Suas contas em paz</h1>
+  <p class="sub">Identidade visual aplicada. Todos os valores vêm de <code>tokens/tokens.css</code>.</p>
+
+  <h2>Paleta</h2>
+  <div class="grid">
+    <div><div class="sw" style="background:#0F7A5A"></div><p>Verde Cofre</p><code>#0F7A5A</code></div>
+    <div><div class="sw" style="background:#1FA97C"></div><p>Verde Vivo</p><code>#1FA97C</code></div>
+    <div><div class="sw" style="background:#DCF2E8"></div><p>Menta</p><code>#DCF2E8</code></div>
+    <div><div class="sw" style="background:#E2603C"></div><p>Coral</p><code>#E2603C</code></div>
+    <div><div class="sw" style="background:#F2B441"></div><p>Ouro</p><code>#F2B441</code></div>
+    <div><div class="sw" style="background:#10221C"></div><p>Grafite</p><code>#10221C</code></div>
+    <div><div class="sw" style="background:#6B7A74"></div><p>Névoa</p><code>#6B7A74</code></div>
+    <div><div class="sw" style="background:#F7F5EF"></div><p>Areia</p><code>#F7F5EF</code></div>
+  </div>
+
+  <h2>Componentes</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--ff-space-3)">
+
+    <div class="card saldo">
+      <div style="font-size:var(--ff-text-sm);opacity:.85">Saldo do mês</div>
+      <div class="n ff-valor" style="margin:4px 0 12px">R$ 4.280,50</div>
+      <div style="display:flex;gap:var(--ff-space-6);font-size:var(--ff-text-sm)">
+        <div><div style="opacity:.85">Entradas</div><div class="ff-valor" style="font-weight:600">R$ 7.150,00</div></div>
+        <div><div style="opacity:.85">Saídas</div><div class="ff-valor" style="font-weight:600">R$ 2.869,50</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:var(--ff-space-3)">
+        <div class="ic" style="background:var(--ff-ouro-fundo)"></div>
+        <div class="grow">
+          <div style="font-weight:500">Reserva de emergência</div>
+          <div class="trilho"><div class="prog"></div></div>
+        </div>
+        <div class="meta ff-valor">68%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="ic"></div>
+        <div class="grow"><div>Mercado Angeloni</div><div class="meta">Ana · hoje</div></div>
+        <div class="out ff-valor">−R$ 312,80</div>
+      </div>
+      <div class="row">
+        <div class="ic"></div>
+        <div class="grow"><div>Salário</div><div class="meta">Marcos · 28 ago</div></div>
+        <div class="in ff-valor">+R$ 4.900,00</div>
+      </div>
+      <div class="row">
+        <div class="ic"></div>
+        <div class="grow"><div>Celesc</div><div class="meta">Casa · 26 ago</div></div>
+        <div class="out ff-valor">−R$ 187,40</div>
+      </div>
+    </div>
+
+    <div class="card" style="display:flex;gap:var(--ff-space-2);flex-wrap:wrap;align-items:center">
+      <button class="primary">Salvar despesa</button>
+      <button class="secondary">Cancelar</button>
+      <button class="ghost">Ver tudo</button>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

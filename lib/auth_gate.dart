@@ -1,9 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app_state.dart';
 
 SupabaseClient get _supabase => Supabase.instance.client;
+
+const _authRedirectUrl = 'familiafinancas://auth/callback';
 
 class AuthGate extends StatelessWidget {
   final AppState state;
@@ -60,6 +64,7 @@ class _AuthPageState extends State<AuthPage> {
           email: email,
           password: password,
           data: {'display_name': _name.text.trim()},
+          emailRedirectTo: kIsWeb ? null : _authRedirectUrl,
         );
         if (mounted) {
           _message('Cadastro criado. Confirme seu e-mail e depois entre no aplicativo.');
@@ -95,7 +100,7 @@ class _AuthPageState extends State<AuthPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(Icons.account_balance_wallet_rounded, size: 64, color: Theme.of(context).colorScheme.primary),
+                  Center(child: SvgPicture.asset('assets/brand/simbolo.svg', width: 72, height: 72)),
                   const SizedBox(height: 20),
                   Text('Família Finanças', textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w900)),
                   const SizedBox(height: 8),
