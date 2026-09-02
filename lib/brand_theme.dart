@@ -44,11 +44,11 @@ abstract final class BrandTheme {
       bodyColor: text,
       displayColor: text,
     ).copyWith(
-      displayLarge: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontWeight: FontWeight.w800),
-      displayMedium: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontWeight: FontWeight.w800),
-      headlineLarge: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontWeight: FontWeight.w800),
-      headlineMedium: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontWeight: FontWeight.w800),
-      titleLarge: const TextStyle(fontFamily: 'Plus Jakarta Sans', fontWeight: FontWeight.w800),
+      displayLarge: base.textTheme.displayLarge?.copyWith(fontFamily: 'Plus Jakarta Sans', color: text, fontWeight: FontWeight.w800),
+      displayMedium: base.textTheme.displayMedium?.copyWith(fontFamily: 'Plus Jakarta Sans', color: text, fontWeight: FontWeight.w800),
+      headlineLarge: base.textTheme.headlineLarge?.copyWith(fontFamily: 'Plus Jakarta Sans', color: text, fontWeight: FontWeight.w800),
+      headlineMedium: base.textTheme.headlineMedium?.copyWith(fontFamily: 'Plus Jakarta Sans', color: text, fontWeight: FontWeight.w800),
+      titleLarge: base.textTheme.titleLarge?.copyWith(fontFamily: 'Plus Jakarta Sans', color: text, fontWeight: FontWeight.w800),
     );
 
     final rounded16 = RoundedRectangleBorder(

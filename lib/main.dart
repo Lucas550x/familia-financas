@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app_state.dart';
 import 'auth_gate.dart';
@@ -155,13 +154,12 @@ class _HomeShellState extends State<HomeShell> {
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('Depois')),
           FilledButton.icon(
-            onPressed: () async {
-              final url = info.downloadUrl.isNotEmpty ? info.downloadUrl : info.pageUrl;
-              if (url.isNotEmpty) await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-              if (context.mounted) Navigator.pop(context);
+            onPressed: () {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text('As atualizações seguras serão disponibilizadas pela Google Play.')));
             },
             icon: const Icon(Icons.download_rounded),
-            label: const Text('Atualizar'),
+            label: const Text('Em breve'),
           ),
         ],
       ),
@@ -216,6 +214,11 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final key = monthKey(month);
+    final user = Supabase.instance.client.auth.currentUser;
+    final greetingName = (user?.userMetadata?['display_name'] as String?)?.trim();
+    final displayName = greetingName?.isNotEmpty == true ? greetingName! : (user?.email?.split('@').first ?? '');
+    final hour = DateTime.now().hour;
+    final greeting = hour < 12 ? 'Bom dia' : hour < 18 ? 'Boa tarde' : 'Boa noite';
     final bills = state.billsFor(key);
     final income = state.totalIncome(key);
     final expenses = state.totalBills(key);
@@ -233,7 +236,7 @@ class DashboardScreen extends StatelessWidget {
           children: [
             SvgPicture.asset('assets/brand/simbolo.svg', width: 46, height: 46),
             const SizedBox(width: 12),
-            const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('Família Finanças', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), Text('Seu dinheiro, sem complicação', style: TextStyle(fontSize: 12, color: Colors.grey))])),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('$greeting${displayName.isEmpty ? '' : ', $displayName'}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)), const Text('Família Finanças', style: TextStyle(fontSize: 12))])),
             IconButton.filledTonal(onPressed: onUpdate, icon: Badge(isLabelVisible: update != null, child: const Icon(Icons.notifications_none_rounded))),
           ],
         ),
@@ -431,6 +434,8 @@ class MoreScreen extends StatelessWidget {
     return ListView(padding: const EdgeInsets.fromLTRB(18, 18, 18, 30), children: [
       const PageTitle(title: 'Mais', subtitle: 'Perfis, metas e configurações'),
       const SizedBox(height: 18),
+      _MenuCard(icon: Icons.person_outline_rounded, title: 'Minha conta', subtitle: 'Nome, e-mail, senha e sair', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountPage()))),
+      const SizedBox(height: 10),
       _MenuCard(icon: Icons.people_alt_outlined, title: 'Perfis da família', subtitle: '${state.profiles.length} perfis', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilesPage(state: state)))),
       const SizedBox(height: 10),
       _MenuCard(icon: Icons.groups_2_outlined, title: 'Minha família', subtitle: 'Convide pessoas para compartilhar', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FamilyPage()))),
@@ -461,7 +466,6 @@ class ProfilesPage extends StatelessWidget {
       body: ListView(padding: const EdgeInsets.all(18), children: [
         ...state.profiles.map((p) => Padding(padding: const EdgeInsets.only(bottom: 10), child: Card(child: ListTile(contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8), leading: CircleAvatar(child: Text(p.emoji)), title: Text(p.name, style: const TextStyle(fontWeight: FontWeight.w700)), subtitle: const Text('Membro da família'), trailing: state.profiles.length > 1 ? IconButton(icon: const Icon(Icons.delete_outline_rounded), onPressed: () => confirmDelete(context, 'Excluir ${p.name}?', () => state.deleteProfile(p))) : null)))),
       ]),
-      floatingActionButton: FloatingActionButton.extended(onPressed: () => showProfileForm(context, state), icon: const Icon(Icons.person_add_alt_1_rounded), label: const Text('Adicionar perfil')),
     ));
   }
 }

@@ -20,6 +20,9 @@ class AuthGate extends StatelessWidget {
     return StreamBuilder<AuthState>(
       stream: _supabase.auth.onAuthStateChange,
       builder: (context, snapshot) {
+        if (snapshot.data?.event == AuthChangeEvent.passwordRecovery) {
+          return const PasswordRecoveryPage();
+        }
         final session = snapshot.data?.session ?? _supabase.auth.currentSession;
         if (session == null) return const AuthPage();
         return FamilyGate(state: state, user: session.user, homeBuilder: homeBuilder);
@@ -124,6 +127,67 @@ class _AuthPageState extends State<AuthPage> {
       ),
     );
   }
+}
+
+class PasswordRecoveryPage extends StatefulWidget {
+  const PasswordRecoveryPage({super.key});
+
+  @override
+  State<PasswordRecoveryPage> createState() => _PasswordRecoveryPageState();
+}
+
+class _PasswordRecoveryPageState extends State<PasswordRecoveryPage> {
+  final _password = TextEditingController();
+
+  @override
+  void dispose() { _password.dispose(); super.dispose(); }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Text('Defina uma nova senha', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 16),
+          TextField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Nova senha')),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: () async { if (_password.text.length < 6) return; await _supabase.auth.updateUser(UserAttributes(password: _password.text)); await _supabase.auth.signOut(); }, child: const Text('Salvar nova senha')),
+        ]))),
+      );
+
+class AccountPage extends StatefulWidget {
+  const AccountPage({super.key});
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  late final TextEditingController _name;
+  late final TextEditingController _email;
+  final _password = TextEditingController();
+
+  @override
+  void initState() { super.initState(); final user = _supabase.auth.currentUser!; _name = TextEditingController(text: user.userMetadata?['display_name'] as String? ?? ''); _email = TextEditingController(text: user.email ?? ''); }
+
+  @override
+  void dispose() { _name.dispose(); _email.dispose(); _password.dispose(); super.dispose(); }
+
+  Future<void> _save() async {
+    await _supabase.auth.updateUser(UserAttributes(email: _email.text.trim(), password: _password.text.isEmpty ? null : _password.text, data: {'display_name': _name.text.trim()}, emailRedirectTo: kIsWeb ? null : _authRedirectUrl));
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Dados atualizados. Confirme o novo e-mail, se ele foi alterado.')));
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text('Minha conta')), body: ListView(padding: const EdgeInsets.all(20), children: [
+    TextField(controller: _name, decoration: const InputDecoration(labelText: 'Seu nome')),
+    const SizedBox(height: 12),
+    TextField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'E-mail')),
+    const SizedBox(height: 12),
+    TextField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Nova senha (opcional)')),
+    const SizedBox(height: 20),
+    FilledButton(onPressed: _save, child: const Text('Salvar alterações')),
+    const SizedBox(height: 12),
+    OutlinedButton.icon(onPressed: () => _supabase.auth.signOut(), icon: const Icon(Icons.logout_rounded), label: const Text('Sair da conta')),
+  ]));
 }
 
 class FamilyGate extends StatefulWidget {
