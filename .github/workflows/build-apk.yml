@@ -38,13 +38,14 @@ jobs:
           permission = '<uses-permission android:name="android.permission.INTERNET" />'
           if permission not in s:
               s = s.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android">', '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission, 1)
-          deep_link = '''            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="familiafinancas" android:host="auth" />
-            </intent-filter>
-'''
+          deep_link = (
+              '            <intent-filter>\n'
+              '                <action android:name="android.intent.action.VIEW" />\n'
+              '                <category android:name="android.intent.category.DEFAULT" />\n'
+              '                <category android:name="android.intent.category.BROWSABLE" />\n'
+              '                <data android:scheme="familiafinancas" android:host="auth" />\n'
+              '            </intent-filter>\n'
+          )
           if 'android:scheme="familiafinancas"' not in s:
               s = s.replace('        </activity>', deep_link + '        </activity>', 1)
           p.write_text(s)
