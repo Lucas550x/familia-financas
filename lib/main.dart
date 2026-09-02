@@ -2,12 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'app_state.dart';
+import 'auth_gate.dart';
 import 'models.dart';
+import 'supabase_config.dart';
 import 'update_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    publishableKey: SupabaseConfig.publishableKey,
+  );
   runApp(const FamiliaFinancasApp());
 }
 
@@ -91,7 +98,7 @@ class _FamiliaFinancasAppState extends State<FamiliaFinancasApp> {
           themeMode: _mode(state.themeMode),
           theme: _theme(Brightness.light),
           darkTheme: _theme(Brightness.dark),
-          home: state.loaded ? HomeShell(state: state) : const _Splash(),
+          home: state.loaded ? AuthGate(state: state, homeBuilder: () => HomeShell(state: state)) : const _Splash(),
         );
       },
     );
@@ -461,6 +468,8 @@ class MoreScreen extends StatelessWidget {
       const PageTitle(title: 'Mais', subtitle: 'Perfis, metas e configurações'),
       const SizedBox(height: 18),
       _MenuCard(icon: Icons.people_alt_outlined, title: 'Perfis da família', subtitle: '${state.profiles.length} perfis', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilesPage(state: state)))),
+      const SizedBox(height: 10),
+      _MenuCard(icon: Icons.groups_2_outlined, title: 'Minha família', subtitle: 'Convide pessoas para compartilhar', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FamilyPage()))),
       const SizedBox(height: 10),
       _MenuCard(icon: Icons.flag_outlined, title: 'Metas', subtitle: '${state.goals.length} metas', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => GoalsPage(state: state)))),
       const SizedBox(height: 10),

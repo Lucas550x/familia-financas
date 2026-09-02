@@ -29,6 +29,18 @@ jobs:
       - name: Criar arquivos de plataforma
         run: flutter create . --project-name familia_financas
 
+      - name: Configurar acesso à internet
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p = Path('android/app/src/main/AndroidManifest.xml')
+          s = p.read_text()
+          permission = '<uses-permission android:name="android.permission.INTERNET" />'
+          if permission not in s:
+              s = s.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android">', '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission, 1)
+              p.write_text(s)
+          PYCODE
+
       - name: Preparar assinatura estável
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
