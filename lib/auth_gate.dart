@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app_state.dart';
 
-final _supabase = Supabase.instance.client;
+SupabaseClient get _supabase => Supabase.instance.client;
 
 class AuthGate extends StatelessWidget {
   final AppState state;
